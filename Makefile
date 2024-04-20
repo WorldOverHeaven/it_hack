@@ -6,7 +6,7 @@ create_swagger:
 
 run:
 	set -ex
-	sudo docker-compose -f $(ROOT_FOLDER)/deploy/docker-compose.yaml -p deploy up -d back_db
-	sudo docker-compose -f $(ROOT_FOLDER)/deploy/docker-compose.yaml -p deploy up -d cloud_db
-	sudo docker-compose -f $(ROOT_FOLDER)/deploy/docker-compose.yaml -p deploy up -d hack_backend
-	sudo docker-compose -f $(ROOT_FOLDER)/deploy/docker-compose.yaml -p deploy up -d hack_cloud
+	sudo docker-compose -f $(ROOT_FOLDER)/deploy/docker-compose.yaml -p deploy up --build -d back_db
+	sudo docker-compose -f $(ROOT_FOLDER)/deploy/docker-compose.yaml -p deploy up --build -d cloud_db
+	sudo docker-compose -f $(ROOT_FOLDER)/deploy/docker-compose.yaml -p deploy up --build -d hack_backend
+	sudo docker-compose -f $(ROOT_FOLDER)/deploy/docker-compose.yaml -p deploy up --build -d hack_cloud

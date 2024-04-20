@@ -204,9 +204,6 @@ const docTemplate = `{
                 "login": {
                     "type": "string"
                 },
-                "private_key": {
-                    "type": "string"
-                },
                 "public_key": {
                     "type": "string"
                 }

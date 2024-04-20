@@ -5,9 +5,8 @@ type BadRequestResponse struct {
 }
 
 type CreateUserRequest struct {
-	Login      string `json:"login"`
-	PublicKey  string `json:"public_key"`
-	PrivateKey string `json:"private_key"`
+	Login     string `json:"login"`
+	PublicKey string `json:"public_key"`
 }
 
 type CreateUserResponse struct {

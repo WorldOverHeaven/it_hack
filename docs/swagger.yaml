@@ -1,0 +1,54 @@
+definitions:
+  models.BadRequestResponse:
+    properties:
+      error_msg:
+        type: string
+    type: object
+  models.CreateUserRequest:
+    properties:
+      login:
+        type: string
+      open_key:
+        type: string
+      private_key:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample server celler server.
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /create_user:
+    post:
+      consumes:
+      - application/json
+      description: CreateUser
+      parameters:
+      - description: CreateUser
+        in: body
+        name: CreateUser
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CreateUserRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.BadRequestResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BadRequestResponse'
+      summary: CreateUser
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

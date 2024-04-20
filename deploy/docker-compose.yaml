@@ -34,9 +34,6 @@ services:
       - "8080:8080"
     networks:
       - hack
-    depends_on:
-      back_db:
-        condition: service_healthy
 
   cloud_db:
     image: postgres

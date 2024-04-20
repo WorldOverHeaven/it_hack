@@ -73,7 +73,7 @@ func (s *service) GetChallenge(ctx context.Context, req models.GetChallengeReque
 		ID:        challengeID,
 		Payload:   challenge,
 		UserLogin: req.Login,
-		PublicKey: req.OpenKey,
+		PublicKey: req.PublicKey,
 	})
 	if err != nil {
 		return models.GetChallengeResponse{}, errors.Wrap(err, "create challenge")

@@ -22,6 +22,7 @@ import (
 	"os/signal"
 	"time"
 
+	_ "github.com/lib/pq"
 	_ "mephi_hack/backend/docs"
 )
 
@@ -81,9 +82,13 @@ func main() {
 func setupDb(cfg config.Config) (database.Database, error) {
 	// create a database connection
 	db, err := database.NewDatabase(cfg.Postgres)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to create database conn %e\n", err)
+	}
+
+	err = db.Ping(context.Background())
+	if err != nil {
+		return nil, errors.New("failed to connect to database")
 	}
 
 	return db, nil

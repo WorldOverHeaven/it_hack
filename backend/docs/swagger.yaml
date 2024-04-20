@@ -8,9 +8,9 @@ definitions:
     properties:
       login:
         type: string
-      open_key:
-        type: string
       private_key:
+        type: string
+      public_key:
         type: string
     type: object
   models.CreateUserResponse:
@@ -42,6 +42,16 @@ definitions:
   models.SolveChallengeResponse:
     properties:
       token:
+        type: string
+    type: object
+  models.VerifyRequest:
+    properties:
+      token:
+        type: string
+    type: object
+  models.VerifyResponse:
+    properties:
+      message:
         type: string
     type: object
 host: localhost:8080
@@ -135,6 +145,34 @@ paths:
           schema:
             $ref: '#/definitions/models.BadRequestResponse'
       summary: SolveChallenge
+  /verify:
+    post:
+      consumes:
+      - application/json
+      description: Verify
+      parameters:
+      - description: Verify
+        in: body
+        name: Verify
+        required: true
+        schema:
+          $ref: '#/definitions/models.VerifyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.VerifyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.BadRequestResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BadRequestResponse'
+      summary: Verify
 securityDefinitions:
   BasicAuth:
     type: basic

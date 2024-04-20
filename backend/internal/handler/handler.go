@@ -35,13 +35,13 @@ func (h *handler) CreateUser(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, models.BadRequestResponse{ErrorMsg: err.Error()})
 	}
 
-	token, err := h.s.CreateUser(context.Background(), request)
+	resp, err := h.s.CreateUser(context.Background(), request)
 	if err != nil {
 		log.Println(err)
 		return ctx.JSON(http.StatusBadRequest, models.BadRequestResponse{ErrorMsg: err.Error()})
 	}
 
-	return ctx.JSON(http.StatusCreated, models.CreateUserResponse{Token: token})
+	return ctx.JSON(http.StatusOK, resp)
 }
 
 // GetChallenge godoc
@@ -68,7 +68,7 @@ func (h *handler) GetChallenge(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, models.BadRequestResponse{ErrorMsg: err.Error()})
 	}
 
-	return ctx.JSON(http.StatusCreated, resp)
+	return ctx.JSON(http.StatusOK, resp)
 }
 
 // SolveChallenge godoc
@@ -95,39 +95,32 @@ func (h *handler) SolveChallenge(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, models.BadRequestResponse{ErrorMsg: err.Error()})
 	}
 
-	return ctx.JSON(http.StatusCreated, resp)
+	return ctx.JSON(http.StatusOK, resp)
 }
 
+// Verify godoc
+// @Summary      Verify
+// @Description  Verify
+// @Accept       json
+// @Produce      json
+// @Param        Verify   body      models.VerifyRequest  true "Verify"
+// @Success      200  {object}  models.VerifyResponse
+// @Failure      400  {object}  models.BadRequestResponse
+// @Failure      500  {object}  models.BadRequestResponse
+// @Router       /verify [post]
 func (h *handler) Verify(ctx echo.Context) error {
-	// Нужен токен авторизации сервиса
-	return nil
-}
+	var request models.VerifyRequest
 
-func (h *handler) AddKeys(ctx echo.Context) error {
-	// Проверить токен
-
-	type in struct {
-		Login   string `json:"login"`
-		OpenKey string `json:"open_key"`
+	if err := ctx.Bind(&request); err != nil {
+		log.Println(err)
+		return ctx.JSON(http.StatusBadRequest, models.BadRequestResponse{ErrorMsg: err.Error()})
 	}
 
-	return ctx.JSON(http.StatusCreated, nil)
-}
+	resp, err := h.s.Verify(context.Background(), request)
+	if err != nil {
+		log.Println(err)
+		return ctx.JSON(http.StatusBadRequest, models.BadRequestResponse{ErrorMsg: err.Error()})
 
-func (h *handler) RegisterCloud(ctx echo.Context) error {
-	return nil
-}
-
-func (h *handler) AuthCloud(ctx echo.Context) error {
-	return nil
-}
-
-func (h *handler) GetContainer(ctx echo.Context) error {
-	// Нужен токен авторизации облака
-	return nil
-}
-
-func (h *handler) PutContainer(ctx echo.Context) error {
-	// Нужен токен авторизации облака
-	return nil
+	}
+	return ctx.JSON(http.StatusOK, resp)
 }

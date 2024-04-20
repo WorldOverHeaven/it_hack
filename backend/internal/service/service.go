@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/hashicorp/go-uuid"
 	"github.com/pkg/errors"
 	"mephi_hack/backend/internal/database"
@@ -22,39 +23,36 @@ func New(db database.Database, a auth.Service) Service {
 }
 
 type Service interface {
-	CreateUser(ctx context.Context, user models.CreateUserRequest) (string, error)
+	CreateUser(ctx context.Context, user models.CreateUserRequest) (models.CreateUserResponse, error)
 	GetChallenge(ctx context.Context, req models.GetChallengeRequest) (models.GetChallengeResponse, error)
-	SolveChallenge(ctx context.Context, req models.SolveChallengeRequest) (string, error)
+	SolveChallenge(ctx context.Context, req models.SolveChallengeRequest) (models.SolveChallengeResponse, error)
+	Verify(ctx context.Context, req models.VerifyRequest) (models.VerifyResponse, error)
 }
 
-func (s *service) CreateUser(ctx context.Context, req models.CreateUserRequest) (string, error) {
+func (s *service) CreateUser(ctx context.Context, req models.CreateUserRequest) (models.CreateUserResponse, error) {
 	id, err := uuid.GenerateUUID()
 	if err != nil {
-		return "", err
+		return models.CreateUserResponse{}, err
 	}
 
 	user := dto.User{
-		ID:    id,
-		Login: req.Login,
-		Keys: []dto.PairKey{
-			{
-				PublicKey:  req.OpenKey,
-				PrivateKey: req.PrivateKey,
-			},
-		},
+		ID:         id,
+		Login:      req.Login,
+		PublicKey:  req.PublicKey,
+		PrivateKey: req.PrivateKey,
 	}
 
 	token, err := s.a.CreateToken(id)
 	if err != nil {
-		return "", err
+		return models.CreateUserResponse{}, err
 	}
 
 	err = s.db.CreateUser(ctx, user)
 	if err != nil {
-		return "", err
+		return models.CreateUserResponse{}, err
 	}
 
-	return token, nil
+	return models.CreateUserResponse{Token: token}, nil
 }
 
 func (s *service) GetChallenge(ctx context.Context, req models.GetChallengeRequest) (models.GetChallengeResponse, error) {
@@ -81,11 +79,37 @@ func (s *service) GetChallenge(ctx context.Context, req models.GetChallengeReque
 	}, nil
 }
 
-func (s *service) SolveChallenge(ctx context.Context, req models.SolveChallengeRequest) (string, error) {
-	_, err := s.db.GetChallengeByID(context.Background(), req.ChallengeID)
+func (s *service) SolveChallenge(ctx context.Context, req models.SolveChallengeRequest) (models.SolveChallengeResponse, error) {
+	challenge, err := s.db.GetChallengeByID(context.Background(), req.ChallengeID)
 	if err != nil {
-		return "", err
+		return models.SolveChallengeResponse{}, errors.Wrap(err, "get challenge")
 	}
 
-	return "", nil
+	// TODO проверить challenge
+
+	userID, err := s.db.GetUserIDByChallenge(ctx, challenge)
+	if err != nil {
+		return models.SolveChallengeResponse{}, errors.Wrap(err, "get user id by challenge")
+	}
+
+	token, err := s.a.CreateToken(userID)
+	if err != nil {
+		return models.SolveChallengeResponse{}, err
+	}
+
+	return models.SolveChallengeResponse{Token: token}, nil
+}
+
+func (s *service) Verify(ctx context.Context, req models.VerifyRequest) (models.VerifyResponse, error) {
+	userID, err := s.a.AuthUser(req.Token)
+	if err != nil {
+		return models.VerifyResponse{}, errors.Wrap(err, "auth token failed")
+	}
+
+	login, err := s.db.GetUserLoginByID(ctx, userID)
+	if err != nil {
+		return models.VerifyResponse{}, errors.Wrap(err, "get user login failed")
+	}
+
+	return models.VerifyResponse{Message: fmt.Sprintf("Ваш логин: %s", login)}, nil
 }

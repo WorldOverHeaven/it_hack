@@ -1,7 +1,7 @@
 postgres:
-  port: 5432
-  host: graphs_db
-  database: graphs
+  port:
+  host:
+  database: db
   user: user
   password: password
 port: 8081

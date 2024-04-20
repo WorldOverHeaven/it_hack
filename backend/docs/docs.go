@@ -144,6 +144,49 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/verify": {
+            "post": {
+                "description": "Verify",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Verify",
+                "parameters": [
+                    {
+                        "description": "Verify",
+                        "name": "Verify",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.VerifyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.VerifyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.BadRequestResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.BadRequestResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -161,10 +204,10 @@ const docTemplate = `{
                 "login": {
                     "type": "string"
                 },
-                "open_key": {
+                "private_key": {
                     "type": "string"
                 },
-                "private_key": {
+                "public_key": {
                     "type": "string"
                 }
             }
@@ -214,6 +257,22 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.VerifyRequest": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.VerifyResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
                     "type": "string"
                 }
             }

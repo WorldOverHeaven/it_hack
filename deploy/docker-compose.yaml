@@ -10,12 +10,31 @@ services:
       context: ..
       dockerfile: deploy/back/Dockerfile
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - ENV=docker
     ports:
       - "8080:8080"
+    networks:
+      - hack
+    depends_on:
+      back_db:
+        condition: service_healthy
+
+  back_db:
+    image: postgres
+    container_name: back_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_DB=db
+      - POSTGRES_PASSWORD=password
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d db -U user -h localhost -p 5432" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ../scripts/init_back.sql:/docker-entrypoint-initdb.d/create_tables.sql
     networks:
       - hack
 
@@ -25,9 +44,6 @@ services:
       context: ..
       dockerfile: deploy/cloud/Dockerfile
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - ENV=docker
     ports:
       - "8081:8081"

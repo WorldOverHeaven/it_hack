@@ -7,6 +7,7 @@ require (
 	github.com/hashicorp/go-uuid v1.0.1
 	github.com/heetch/confita v0.10.0
 	github.com/labstack/echo/v4 v4.12.0
+	github.com/lib/pq v1.10.9
 	github.com/pkg/errors v0.8.1
 	github.com/samber/lo v1.39.0
 	github.com/swaggo/echo-swagger v1.4.1

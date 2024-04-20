@@ -6,7 +6,7 @@ type BadRequestResponse struct {
 
 type CreateUserRequest struct {
 	Login      string `json:"login"`
-	OpenKey    string `json:"open_key"`
+	PublicKey  string `json:"public_key"`
 	PrivateKey string `json:"private_key"`
 }
 
@@ -33,31 +33,10 @@ type SolveChallengeResponse struct {
 	Token string `json:"token"`
 }
 
-type RegisterCloudRequest struct {
-	Login    string `json:"login"`
-	Password string `json:"password"`
-}
-
-type RegisterCloudResponse struct {
+type VerifyRequest struct {
 	Token string `json:"token"`
 }
 
-type AuthCloudRequest struct {
-	Login    string `json:"login"`
-	Password string `json:"password"`
-}
-
-type AuthCloudResponse struct {
-	Token string `json:"token"`
-}
-
-type GetContainerRequest struct {
-	ContainerID string `json:"container_id"`
-}
-
-type GetContainerResponse struct {
-	ContainerID string `json:"container_id"`
-}
-
-type PutContainerRequest struct {
+type VerifyResponse struct {
+	Message string `json:"message"`
 }

@@ -18,15 +18,10 @@ type Database interface {
 }
 
 type database struct {
-	client     *sql.DB
-	users      []dto.User
-	challenges []dto.Challenge
+	client *sql.DB
 }
 
 func NewDatabase(config Config) (*database, error) {
-	users := make([]dto.User, 0)
-	challenges := make([]dto.Challenge, 0)
-
 	connInfo := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		config.Host, config.Port, config.User, config.Password, config.Database,
@@ -38,9 +33,7 @@ func NewDatabase(config Config) (*database, error) {
 	}
 
 	return &database{
-		client:     client,
-		users:      users,
-		challenges: challenges,
+		client: client,
 	}, nil
 }
 
@@ -58,7 +51,6 @@ func (db *database) CreateUser(ctx context.Context, user dto.User) error {
 	if err != nil {
 		return err
 	}
-	db.users = append(db.users, user)
 	fmt.Printf("SAVED USER %+v\n", user)
 	return nil
 }
@@ -68,7 +60,6 @@ func (db *database) CreateChallenge(ctx context.Context, challenge dto.Challenge
 	if err != nil {
 		return err
 	}
-	db.challenges = append(db.challenges, challenge)
 	fmt.Printf("CREATED CHALLENGE %+v\n", challenge)
 	return nil
 }

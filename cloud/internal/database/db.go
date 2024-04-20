@@ -2,6 +2,8 @@ package database
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 	"github.com/pkg/errors"
 	"mephi_hack/cloud/internal/dto"
 )
@@ -9,83 +11,104 @@ import (
 type Database interface {
 	Ping(ctx context.Context) error
 	CreateUser(ctx context.Context, user dto.User) error
-	GetUserByID(id string) (dto.User, error)
+	GetUserByID(ctx context.Context, id string) (dto.User, error)
 	GetPayload(ctx context.Context, userID string) (string, error)
 	PutPayload(ctx context.Context, userID string, payload string) error
 	GetUserByLoginAndPassword(ctx context.Context, login, password string) (dto.User, error)
 }
 
 type database struct {
-	users map[string]dto.User
+	client *sql.DB
 }
 
 func NewDatabase(config Config) (*database, error) {
-	// users map[uuid]dto.User
-	users := make(map[string]dto.User)
+	connInfo := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		config.Host, config.Port, config.User, config.Password, config.Database,
+	)
+	client, err := sql.Open("postgres", connInfo)
 
-	return &database{
-		users: users,
-	}, nil
-	//connInfo := fmt.Sprintf(
-	//	"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-	//	config.Host, config.Port, config.User, config.Password, config.Database,
-	//)
-	//client, err := sql.Open("postgres", connInfo)
-	//
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//return &database{client: client}, nil
+	if err != nil {
+		return nil, err
+	}
+
+	return &database{client: client}, nil
 }
 
-func (d *database) Ping(ctx context.Context) error {
+func (db *database) Ping(ctx context.Context) error {
+	_, err := db.client.QueryContext(ctx, "SELECT 1 FROM users;")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (d *database) CreateUser(ctx context.Context, user dto.User) error {
-	if _, ok := d.users[user.ID]; ok {
-		return errors.New("user already exists")
+func (db *database) CreateUser(ctx context.Context, user dto.User) error {
+	_, err := db.client.QueryContext(ctx, createUserQuery, user.ID, user.Login, user.Password, user.Payload)
+	if err != nil {
+		return err
 	}
-	d.users[user.ID] = user
+	fmt.Printf("SAVED USER %+v\n", user)
 	return nil
 }
 
-func (d *database) GetUserByLoginAndPassword(ctx context.Context, login, password string) (dto.User, error) {
-	for _, user := range d.users {
-		if user.Login == login && user.Password == password {
-			return user, nil
-		}
-	}
-	return dto.User{}, errors.Errorf("user not found with login = %s and password = %s", login, password)
-}
+func (db *database) GetUserByLoginAndPassword(ctx context.Context, login, password string) (dto.User, error) {
+	row := db.client.QueryRowContext(ctx, selectUserByLoginAndPassword, login, password)
 
-func (d *database) GetUserByID(id string) (dto.User, error) {
-	user, ok := d.users[id]
-	if !ok {
-		return dto.User{}, errors.Errorf("user with id = %s not found", id)
+	user := dto.User{
+		ID:       "",
+		Login:    login,
+		Password: password,
+		Payload:  "",
 	}
+
+	err := row.Scan(&user.ID, &user.Payload)
+	if err != nil {
+		return dto.User{}, errors.Errorf("user not found with login = %s and password = %s", login, password)
+	}
+
+	fmt.Printf("GOT user %+v\n", user)
 	return user, nil
 }
 
-func (d *database) GetPayload(ctx context.Context, userID string) (string, error) {
-	user, ok := d.users[userID]
-	if !ok {
-		return "", errors.Errorf("not find user with userid = %s", userID)
+func (db *database) GetUserByID(ctx context.Context, id string) (dto.User, error) {
+	row := db.client.QueryRowContext(ctx, selectUserByID, id)
+
+	user := dto.User{
+		ID:       id,
+		Login:    "",
+		Password: "",
+		Payload:  "",
 	}
-	return user.Payload, nil
+
+	err := row.Scan(&user.Login, &user.Password, &user.Payload)
+	if err != nil {
+		return dto.User{}, errors.Errorf("user not found with id = %s ", id)
+	}
+
+	fmt.Printf("GOT user %+v\n", user)
+	return user, nil
 }
 
-func (d *database) PutPayload(ctx context.Context, userID string, payload string) error {
-	user, ok := d.users[userID]
-	if !ok {
-		return errors.Errorf("not find user with userid = %s", userID)
+func (db *database) GetPayload(ctx context.Context, userID string) (string, error) {
+	row := db.client.QueryRowContext(ctx, selectPayloadByID, userID)
+
+	var payload string
+
+	err := row.Scan(&payload)
+	if err != nil {
+		return "", errors.Errorf("user not found with id = %s ", userID)
 	}
-	d.users[userID] = dto.User{
-		ID:       user.ID,
-		Login:    user.Login,
-		Password: user.Password,
-		Payload:  payload,
+
+	return payload, nil
+}
+
+func (db *database) PutPayload(ctx context.Context, userID string, payload string) error {
+	_, err := db.client.QueryContext(ctx, putPayload, payload, userID)
+	if err != nil {
+		return err
 	}
+	fmt.Printf("updated payload %s where userid = %s", payload, userID)
 	return nil
 }

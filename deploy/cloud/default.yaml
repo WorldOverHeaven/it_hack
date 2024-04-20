@@ -1,6 +1,6 @@
 postgres:
-  port:
-  host:
+  port: 5433
+  host: cloud_db
   database: db
   user: user
   password: password

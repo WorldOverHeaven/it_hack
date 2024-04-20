@@ -29,7 +29,7 @@ type Service interface {
 func (s *service) CreateUser(ctx context.Context, req modelscloud.CreateUserRequest) (string, error) {
 	id, err := uuid.GenerateUUID()
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "generate uuid")
 	}
 
 	user := dto.User{
@@ -41,12 +41,12 @@ func (s *service) CreateUser(ctx context.Context, req modelscloud.CreateUserRequ
 
 	token, err := s.a.CreateToken(id)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "create token")
 	}
 
 	err = s.db.CreateUser(ctx, user)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "create user")
 	}
 
 	return token, nil
@@ -55,12 +55,12 @@ func (s *service) CreateUser(ctx context.Context, req modelscloud.CreateUserRequ
 func (s *service) AuthUser(ctx context.Context, req modelscloud.AuthUserRequest) (string, error) {
 	user, err := s.db.GetUserByLoginAndPassword(context.Background(), req.Login, req.Password)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "get user by login")
 	}
 
 	token, err := s.a.CreateToken(user.ID)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "create token")
 	}
 
 	return token, nil

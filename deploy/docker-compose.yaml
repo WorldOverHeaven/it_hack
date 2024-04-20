@@ -49,3 +49,23 @@ services:
       - "8081:8081"
     networks:
       - hack
+
+  cloud_db:
+    image: postgres
+    container_name: cloud_db
+    ports:
+      - "5433:5433"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_DB=db
+      - POSTGRES_PASSWORD=password
+      - PGPORT=5433
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d db -U user -h localhost -p 5433" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ../scripts/init_cloud.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    networks:
+      - hack

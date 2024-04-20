@@ -2,15 +2,20 @@ package service
 
 import (
 	"context"
+	"crypto"
+	"crypto/rsa"
+	"crypto/sha256"
+	"crypto/x509"
+	"encoding/base64"
+	"encoding/pem"
 	"fmt"
 	"github.com/hashicorp/go-uuid"
 	"github.com/pkg/errors"
+	"github.com/samber/lo"
 	"mephi_hack/backend/internal/database"
 	"mephi_hack/backend/internal/dto"
 	"mephi_hack/backend/internal/models"
 	"mephi_hack/pkg/auth"
-
-	"github.com/samber/lo"
 )
 
 type service struct {
@@ -60,7 +65,9 @@ func (s *service) GetChallenge(ctx context.Context, req models.GetChallengeReque
 		return models.GetChallengeResponse{}, errors.Wrap(err, "error generating challengeID")
 	}
 
-	challenge := lo.RandomString(32, []rune("1234567890qwertyuiopasdfghjklzxcvbnm"))
+	challengeString := lo.RandomString(32, []rune("1234567890qwertyuiopasdfghjklzxcvbnm"))
+
+	challenge := base64.StdEncoding.EncodeToString([]byte(challengeString))
 
 	err = s.db.CreateChallenge(ctx, dto.Challenge{
 		ID:        challengeID,
@@ -84,7 +91,10 @@ func (s *service) SolveChallenge(ctx context.Context, req models.SolveChallengeR
 		return models.SolveChallengeResponse{}, errors.Wrap(err, "get challenge")
 	}
 
-	// TODO проверить challenge
+	err = s.verify(challenge.Payload, req.SolvedChallenge, challenge.PublicKey)
+	if err != nil {
+		return models.SolveChallengeResponse{}, errors.Wrap(err, "verify failed")
+	}
 
 	userID, err := s.db.GetUserIDByChallenge(ctx, challenge)
 	if err != nil {
@@ -97,6 +107,47 @@ func (s *service) SolveChallenge(ctx context.Context, req models.SolveChallengeR
 	}
 
 	return models.SolveChallengeResponse{Token: token}, nil
+}
+
+func (*service) verify(challengeString, solvedChallengeString, publicKeyString string) error {
+	publicKeyString = "-----BEGIN PUBLIC KEY-----\n" + publicKeyString + "\n-----END PUBLIC KEY-----"
+	publicKeyBlock, _ := pem.Decode([]byte(publicKeyString))
+	if publicKeyBlock == nil {
+		return errors.Errorf("Failed to parse PEM block containing the public key")
+	}
+
+	publicKey, err := x509.ParsePKIXPublicKey(publicKeyBlock.Bytes)
+	if err != nil {
+		return errors.Wrap(err, "Failed to parse public key")
+	}
+
+	rsaPubKey, ok := publicKey.(*rsa.PublicKey)
+	if !ok {
+		return errors.Errorf("Could not convert to rsa.PublicKey")
+	}
+
+	fmt.Println("Successfully parsed public key")
+
+	challenge, err := base64.StdEncoding.DecodeString(challengeString)
+	if err != nil {
+		return errors.Wrap(err, "Failed to parse challenge")
+	}
+
+	solvedChallenge, err := base64.StdEncoding.DecodeString(solvedChallengeString)
+	if err != nil {
+		return errors.Wrap(err, "Failed to parse solved challenge")
+	}
+
+	hashed := sha256.Sum256(challenge)
+
+	err = rsa.VerifyPKCS1v15(rsaPubKey, crypto.SHA256, hashed[:], solvedChallenge)
+	if err != nil {
+		return errors.Wrap(err, "Failed to verify")
+	}
+
+	fmt.Println("Successfully verified")
+
+	return nil
 }
 
 func (s *service) Verify(ctx context.Context, req models.VerifyRequest) (models.VerifyResponse, error) {

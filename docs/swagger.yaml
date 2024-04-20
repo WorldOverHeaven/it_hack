@@ -13,6 +13,37 @@ definitions:
       private_key:
         type: string
     type: object
+  models.CreateUserResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  models.GetChallengeRequest:
+    properties:
+      login:
+        type: string
+      open_key:
+        type: string
+    type: object
+  models.GetChallengeResponse:
+    properties:
+      challenge:
+        type: string
+      challenge_id:
+        type: string
+    type: object
+  models.SolveChallengeRequest:
+    properties:
+      challenge_id:
+        type: string
+      solved_challenge:
+        type: string
+    type: object
+  models.SolveChallengeResponse:
+    properties:
+      token:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -38,7 +69,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.CreateUserRequest'
+            $ref: '#/definitions/models.CreateUserResponse'
         "400":
           description: Bad Request
           schema:
@@ -48,6 +79,62 @@ paths:
           schema:
             $ref: '#/definitions/models.BadRequestResponse'
       summary: CreateUser
+  /get_challenge:
+    post:
+      consumes:
+      - application/json
+      description: GetChallenge
+      parameters:
+      - description: GetChallenge
+        in: body
+        name: GetChallenge
+        required: true
+        schema:
+          $ref: '#/definitions/models.GetChallengeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetChallengeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.BadRequestResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BadRequestResponse'
+      summary: GetChallenge
+  /solve_challenge:
+    post:
+      consumes:
+      - application/json
+      description: SolveChallenge
+      parameters:
+      - description: SolveChallenge
+        in: body
+        name: SolveChallenge
+        required: true
+        schema:
+          $ref: '#/definitions/models.SolveChallengeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SolveChallengeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.BadRequestResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.BadRequestResponse'
+      summary: SolveChallenge
 securityDefinitions:
   BasicAuth:
     type: basic

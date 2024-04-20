@@ -5,11 +5,15 @@ import (
 	"database/sql"
 	"example.com/m/v2/backend/internal/dto"
 	"fmt"
+	"github.com/pkg/errors"
+	"github.com/samber/lo"
 )
 
 type Database interface {
 	Ping(ctx context.Context) error
 	CreateUser(ctx context.Context, user dto.User) error
+	CreateChallenge(ctx context.Context, challenge dto.Challenge) error
+	GetChallengeByID(ctx context.Context, id string) (dto.Challenge, error)
 }
 
 type database struct {
@@ -55,10 +59,19 @@ func (db *database) CreateUser(ctx context.Context, user dto.User) error {
 
 func (db *database) CreateChallenge(ctx context.Context, challenge dto.Challenge) error {
 	db.challenges = append(db.challenges, challenge)
+	fmt.Printf("CREATED CHALLENGE %+v\n", challenge)
 	return nil
 }
 
-func (db *database) CreateAccess(ctx context.Context, access dto.Access) error {
-	db.accesses = append(db.accesses, access)
-	return nil
+func (db *database) GetChallengeByID(ctx context.Context, id string) (dto.Challenge, error) {
+	items := lo.Filter(db.challenges, func(item dto.Challenge, index int) bool {
+		return item.ID == id
+	})
+	if len(items) != 1 {
+		return dto.Challenge{}, errors.Errorf("can't find challenge by id %s, len(items) = %d", id, len(items))
+	}
+
+	fmt.Printf("GOT CHALLENGE %+v\n", items[0])
+
+	return items[0], nil
 }

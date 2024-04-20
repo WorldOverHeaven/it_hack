@@ -16,7 +16,7 @@ type Challenge struct {
 	ID string
 
 	Payload   string
-	UserID    string
+	UserLogin string
 	PublicKey string
 }
 

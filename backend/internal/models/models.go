@@ -13,3 +13,22 @@ type CreateUserRequest struct {
 type CreateUserResponse struct {
 	Token string `json:"token"`
 }
+
+type GetChallengeRequest struct {
+	Login   string `json:"login"`
+	OpenKey string `json:"open_key"`
+}
+
+type GetChallengeResponse struct {
+	ChallengeID string `json:"challenge_id"`
+	Challenge   string `json:"challenge"`
+}
+
+type SolveChallengeRequest struct {
+	ChallengeID     string `json:"challenge_id"`
+	SolvedChallenge string `json:"solved_challenge"`
+}
+
+type SolveChallengeResponse struct {
+	Token string `json:"token"`
+}

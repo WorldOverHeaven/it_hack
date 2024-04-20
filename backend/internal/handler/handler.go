@@ -7,7 +7,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
-	"time"
 )
 
 func New(s service.Service) *handler {
@@ -45,6 +44,65 @@ func (h *handler) CreateUser(ctx echo.Context) error {
 	return ctx.JSON(http.StatusCreated, models.CreateUserResponse{Token: token})
 }
 
+// GetChallenge godoc
+// @Summary      GetChallenge
+// @Description  GetChallenge
+// @Accept       json
+// @Produce      json
+// @Param        GetChallenge   body      models.GetChallengeRequest  true "GetChallenge"
+// @Success      200  {object}  models.GetChallengeResponse
+// @Failure      400  {object}  models.BadRequestResponse
+// @Failure      500  {object}  models.BadRequestResponse
+// @Router       /get_challenge [post]
+func (h *handler) GetChallenge(ctx echo.Context) error {
+	var request models.GetChallengeRequest
+
+	if err := ctx.Bind(&request); err != nil {
+		log.Println(err)
+		return ctx.JSON(http.StatusBadRequest, models.BadRequestResponse{ErrorMsg: err.Error()})
+	}
+
+	resp, err := h.s.GetChallenge(context.Background(), request)
+	if err != nil {
+		log.Println(err)
+		return ctx.JSON(http.StatusBadRequest, models.BadRequestResponse{ErrorMsg: err.Error()})
+	}
+
+	return ctx.JSON(http.StatusCreated, resp)
+}
+
+// SolveChallenge godoc
+// @Summary      SolveChallenge
+// @Description  SolveChallenge
+// @Accept       json
+// @Produce      json
+// @Param        SolveChallenge   body      models.SolveChallengeRequest  true "SolveChallenge"
+// @Success      200  {object}  models.SolveChallengeResponse
+// @Failure      400  {object}  models.BadRequestResponse
+// @Failure      500  {object}  models.BadRequestResponse
+// @Router       /solve_challenge [post]
+func (h *handler) SolveChallenge(ctx echo.Context) error {
+	var request models.SolveChallengeRequest
+
+	if err := ctx.Bind(&request); err != nil {
+		log.Println(err)
+		return ctx.JSON(http.StatusBadRequest, models.BadRequestResponse{ErrorMsg: err.Error()})
+	}
+
+	resp, err := h.s.SolveChallenge(context.Background(), request)
+	if err != nil {
+		log.Println(err)
+		return ctx.JSON(http.StatusBadRequest, models.BadRequestResponse{ErrorMsg: err.Error()})
+	}
+
+	return ctx.JSON(http.StatusCreated, resp)
+}
+
+func (h *handler) Verify(ctx echo.Context) error {
+	// Нужен токен авторизации сервиса
+	return nil
+}
+
 func (h *handler) AddKeys(ctx echo.Context) error {
 	// Проверить токен
 
@@ -56,56 +114,20 @@ func (h *handler) AddKeys(ctx echo.Context) error {
 	return ctx.JSON(http.StatusCreated, nil)
 }
 
-func (h *handler) GetChallenge(ctx echo.Context) error {
-	type in struct {
-		Login   string
-		OpenKey string
-	}
-
-	type out struct {
-		Challenge   string
-		OperationID string
-	}
-
+func (h *handler) RegisterCloud(ctx echo.Context) error {
 	return nil
 }
 
-func (h *handler) SolveChallenge(ctx echo.Context) error {
-	type in struct {
-		OperationID string `json:"operation_id"`
-		Solution    string
-	}
-
-	token := "228"
-
-	cookie := new(http.Cookie)
-	cookie.Name = "token"
-	cookie.Value = token
-	cookie.Expires = time.Now().Add(24 * time.Hour)
-	ctx.SetCookie(cookie)
-
-	return ctx.JSON(http.StatusCreated, nil)
+func (h *handler) AuthCloud(ctx echo.Context) error {
+	return nil
 }
 
-func (h *handler) GetAccess(ctx echo.Context) error {
-	type in struct {
-		Login string
-	}
-
-	type out struct {
-		Number string `json:"number"`
-	}
-
-	q := out{}
-
-	return ctx.JSON(http.StatusOK, q)
+func (h *handler) GetContainer(ctx echo.Context) error {
+	// Нужен токен авторизации облака
+	return nil
 }
 
-func (h *handler) OkAccess(ctx echo.Context) error {
-	// Проверяем токен
-	type in struct {
-		Number string
-	}
-
-	return ctx.JSON(http.StatusCreated, nil)
+func (h *handler) PutContainer(ctx echo.Context) error {
+	// Нужен токен авторизации облака
+	return nil
 }

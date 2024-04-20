@@ -1,4 +1,4 @@
-package ru.mephi.auth.client.model;
+package ru.mephi.auth.model;
 
 public record Credential(
     String openKey,

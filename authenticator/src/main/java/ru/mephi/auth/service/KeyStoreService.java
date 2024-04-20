@@ -1,4 +1,4 @@
-package ru.mephi.auth.client.service;
+package ru.mephi.auth.service;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,7 +16,10 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.Enumeration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,7 @@ public class KeyStoreService {
   private final String keyStorePassword;
   private final String keyStorePath;
   private final KeyStore keyStore;
+  private static final Logger LOG = LoggerFactory.getLogger(KeyStoreService.class);
 
   public KeyStoreService(@Value("${keystore.password}") String keyStorePassword, @Value("${keystore.path}") String keyStorePath, KeyStore keyStore) {
     this.keyStorePassword = keyStorePassword;
@@ -61,15 +65,20 @@ public class KeyStoreService {
     return cert.getPublicKey();
   }
 
+  public String getPublicKeyString(String login) throws KeyStoreException {
+    Certificate cert = keyStore.getCertificate(login);
+    if (cert == null) {
+      throw new KeyStoreException("No certificate found for alias: " + login);
+    }
+
+    return Base64.getEncoder().encodeToString(getPublicKey(login).getEncoded());
+  }
+
   public void putKeys(
       KeyPair keyPair,
       X509Certificate certificate,
       String login
   ) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-    if (keyStore.containsAlias(login)) {
-      throw new KeyStoreException("alias: " + login + " already exists");
-    }
-
     X509Certificate[] certChain = new X509Certificate[]{certificate};
     keyStore.setKeyEntry(login, keyPair.getPrivate(), keyStorePassword.toCharArray(), certChain);
 
@@ -99,14 +108,12 @@ public class KeyStoreService {
         Key key = externalKeyStore.getKey(alias, keyStorePassword.toCharArray());
         Certificate[] certChain = externalKeyStore.getCertificateChain(alias);
 
-        // Add the key and certificate chain to the local key store
         keyStore.setKeyEntry(alias, key, keyStorePassword.toCharArray(), certChain);
       } else {
-        System.out.println("Alias " + alias + " already exists in the local key store.");
+        LOG.info("Alias {} already exists in the local key store.", alias);
       }
     }
 
-    // Optionally, store the updated local key store back to persistent storage
     try (FileOutputStream fos = new FileOutputStream(keyStorePath)) {
       keyStore.store(fos, keyStorePassword.toCharArray());
     }

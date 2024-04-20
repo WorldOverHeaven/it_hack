@@ -1,4 +1,4 @@
-package ru.mephi.auth.client.exception;
+package ru.mephi.auth.exception;
 
 import javassist.NotFoundException;
 

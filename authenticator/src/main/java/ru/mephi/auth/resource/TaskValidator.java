@@ -1,8 +1,8 @@
-package ru.mephi.auth.client.resource;
+package ru.mephi.auth.resource;
 
 import io.micrometer.common.util.StringUtils;
-import ru.mephi.auth.client.dto.TaskDto;
-import ru.mephi.auth.client.exception.IllegalTaskException;
+import ru.mephi.auth.dto.TaskDto;
+import ru.mephi.auth.exception.IllegalTaskException;
 
 public class TaskValidator {
     public static void validateNewTask(TaskDto taskDto) {

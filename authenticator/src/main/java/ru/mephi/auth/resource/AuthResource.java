@@ -1,4 +1,4 @@
-package ru.mephi.auth.client.resource;
+package ru.mephi.auth.resource;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;

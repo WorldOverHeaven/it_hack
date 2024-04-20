@@ -1,4 +1,4 @@
-package ru.mephi.auth.client.config;
+package ru.mephi.auth.config;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,8 +20,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
-import ru.mephi.auth.client.entity.Task;
-import ru.mephi.auth.client.resource.TaskResource;
+import ru.mephi.auth.entity.Task;
+import ru.mephi.auth.resource.TaskResource;
 
 import javax.sql.DataSource;
 import java.util.Properties;

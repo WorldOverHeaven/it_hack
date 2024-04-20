@@ -1,4 +1,4 @@
-package ru.mephi.auth.client.resource;
+package ru.mephi.auth.resource;
 
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -12,9 +12,9 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.mephi.auth.client.dto.TaskDto;
-import ru.mephi.auth.client.exception.IllegalTaskException;
-import ru.mephi.auth.client.service.TaskService;
+import ru.mephi.auth.dto.TaskDto;
+import ru.mephi.auth.exception.IllegalTaskException;
+import ru.mephi.auth.service.TaskService;
 
 import java.util.List;
 

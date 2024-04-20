@@ -1,10 +1,10 @@
-package ru.mephi.auth.client.service;
+package ru.mephi.auth.service;
 
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import org.springframework.stereotype.Service;
-import ru.mephi.auth.client.exception.CredentialsException;
-import ru.mephi.auth.client.model.Credential;
+import ru.mephi.auth.exception.CredentialsException;
+import ru.mephi.auth.model.Credential;
 
 @Service
 public class CredentialService {

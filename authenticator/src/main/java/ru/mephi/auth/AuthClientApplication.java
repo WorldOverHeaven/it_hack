@@ -1,4 +1,4 @@
-package ru.mephi.auth.client;
+package ru.mephi.auth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

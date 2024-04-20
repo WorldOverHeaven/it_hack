@@ -1,12 +1,12 @@
-package ru.mephi.auth.client.service;
+package ru.mephi.auth.service;
 
 import jakarta.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.mephi.auth.client.dao.TaskDao;
-import ru.mephi.auth.client.dto.TaskDto;
-import ru.mephi.auth.client.entity.Task;
-import ru.mephi.auth.client.exception.IllegalTaskException;
+import ru.mephi.auth.dao.TaskDao;
+import ru.mephi.auth.dto.TaskDto;
+import ru.mephi.auth.entity.Task;
+import ru.mephi.auth.exception.IllegalTaskException;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package ru.mephi.auth.client.dto;
+package ru.mephi.auth.dto;
 
 public class TaskDto {
     private Long id;

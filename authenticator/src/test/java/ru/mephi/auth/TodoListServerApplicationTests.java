@@ -1,4 +1,4 @@
-package ru.mephi.auth.client;
+package ru.mephi.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

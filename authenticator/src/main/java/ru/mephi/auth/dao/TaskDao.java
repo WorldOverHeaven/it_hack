@@ -1,10 +1,10 @@
-package ru.mephi.auth.client.dao;
+package ru.mephi.auth.dao;
 
 import jakarta.inject.Inject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
-import ru.mephi.auth.client.entity.Task;
+import ru.mephi.auth.entity.Task;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;

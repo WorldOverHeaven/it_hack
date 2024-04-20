@@ -1,8 +1,8 @@
-package ru.mephi.auth.client.service;
+package ru.mephi.auth.service;
 
 import org.springframework.stereotype.Service;
-import ru.mephi.auth.client.dto.TaskDto;
-import ru.mephi.auth.client.entity.Task;
+import ru.mephi.auth.dto.TaskDto;
+import ru.mephi.auth.entity.Task;
 
 @Service
 public class TaskMapper {

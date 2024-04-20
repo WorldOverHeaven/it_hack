@@ -1,4 +1,4 @@
-package ru.mephi.auth.client.entity;
+package ru.mephi.auth.entity;
 
 import org.hibernate.Hibernate;
 

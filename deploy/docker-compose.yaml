@@ -4,21 +4,6 @@ networks:
   hack:
 
 services:
-  hack_backend:
-    container_name: hack_back
-    build:
-      context: ..
-      dockerfile: deploy/back/Dockerfile
-    environment:
-      - ENV=docker
-    ports:
-      - "8080:8080"
-    networks:
-      - hack
-    depends_on:
-      back_db:
-        condition: service_healthy
-
   back_db:
     image: postgres
     container_name: back_db
@@ -38,17 +23,20 @@ services:
     networks:
       - hack
 
-  hack_cloud:
-    container_name: hack_cloud
+  hack_backend:
+    container_name: hack_back
     build:
       context: ..
-      dockerfile: deploy/cloud/Dockerfile
+      dockerfile: deploy/back/Dockerfile
     environment:
       - ENV=docker
     ports:
-      - "8081:8081"
+      - "8080:8080"
     networks:
       - hack
+    depends_on:
+      back_db:
+        condition: service_healthy
 
   cloud_db:
     image: postgres
@@ -67,5 +55,17 @@ services:
       retries: 5
     volumes:
       - ../scripts/init_cloud.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    networks:
+      - hack
+
+  hack_cloud:
+    container_name: hack_cloud
+    build:
+      context: ..
+      dockerfile: deploy/cloud/Dockerfile
+    environment:
+      - ENV=docker
+    ports:
+      - "8081:8081"
     networks:
       - hack

@@ -8,7 +8,7 @@ services:
     container_name: hack_back
     build:
       context: ..
-      dockerfile: deploy/Dockerfile
+      dockerfile: deploy/back/Dockerfile
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
@@ -16,5 +16,20 @@ services:
       - ENV=docker
     ports:
       - "8080:8080"
+    networks:
+      - hack
+
+  hack_cloud:
+    container_name: hack_cloud
+    build:
+      context: ..
+      dockerfile: deploy/cloud/Dockerfile
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - ENV=docker
+    ports:
+      - "8081:8081"
     networks:
       - hack

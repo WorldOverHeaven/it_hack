@@ -3,10 +3,10 @@ package database
 import (
 	"context"
 	"database/sql"
-	"example.com/m/v2/backend/internal/dto"
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
+	"mephi_hack/backend/internal/dto"
 )
 
 type Database interface {

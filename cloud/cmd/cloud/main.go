@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"errors"
-	echoSwagger "github.com/swaggo/echo-swagger"
-	"mephi_hack/backend/internal/config"
-	"mephi_hack/backend/internal/database"
-	"mephi_hack/backend/internal/handler"
-	"mephi_hack/backend/internal/service"
+	"mephi_hack/cloud/internal/config"
+	"mephi_hack/cloud/internal/database"
+	"mephi_hack/cloud/internal/handler"
+	"mephi_hack/cloud/internal/service"
 	"mephi_hack/pkg/auth"
+
+	echoSwagger "github.com/swaggo/echo-swagger"
 
 	"flag"
 	"fmt"
@@ -22,7 +23,7 @@ import (
 	"os/signal"
 	"time"
 
-	_ "mephi_hack/backend/docs"
+	_ "mephi_hack/cloud/docs"
 )
 
 const secret = "niggers"
@@ -37,7 +38,7 @@ func parseRootPath() string {
 // @title           Swagger Example API
 // @version         1.0
 // @description     This is a sample server celler server.
-// @host      localhost:8080
+// @host      localhost:8081
 // @securityDefinitions.basic  BasicAuth
 func main() {
 	rootPath := parseRootPath()
@@ -105,7 +106,7 @@ func setupCfg(rootPath string) (config.Config, error) {
 	var cfg config.Config
 
 	err := confita.NewLoader(
-		file.NewBackend(fmt.Sprintf("%s/deploy/back/default.yaml", rootPath)),
+		file.NewBackend(fmt.Sprintf("%s/deploy/cloud/default.yaml", rootPath)),
 		env.NewBackend(),
 	).Load(ctx, &cfg)
 

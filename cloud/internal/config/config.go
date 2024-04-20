@@ -1,6 +1,8 @@
 package config
 
-import "mephi_hack/backend/internal/database"
+import (
+	"mephi_hack/cloud/internal/database"
+)
 
 type Config struct {
 	Host string `config:"APP_HOST" yaml:"host"`

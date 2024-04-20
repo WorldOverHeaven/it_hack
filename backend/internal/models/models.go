@@ -32,3 +32,32 @@ type SolveChallengeRequest struct {
 type SolveChallengeResponse struct {
 	Token string `json:"token"`
 }
+
+type RegisterCloudRequest struct {
+	Login    string `json:"login"`
+	Password string `json:"password"`
+}
+
+type RegisterCloudResponse struct {
+	Token string `json:"token"`
+}
+
+type AuthCloudRequest struct {
+	Login    string `json:"login"`
+	Password string `json:"password"`
+}
+
+type AuthCloudResponse struct {
+	Token string `json:"token"`
+}
+
+type GetContainerRequest struct {
+	ContainerID string `json:"container_id"`
+}
+
+type GetContainerResponse struct {
+	ContainerID string `json:"container_id"`
+}
+
+type PutContainerRequest struct {
+}

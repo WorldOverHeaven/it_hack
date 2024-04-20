@@ -1,0 +1,172 @@
+definitions:
+  modelscloud.AuthUserRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  modelscloud.AuthUserResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  modelscloud.BadRequestResponse:
+    properties:
+      error_msg:
+        type: string
+    type: object
+  modelscloud.CreateUserRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  modelscloud.CreateUserResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  modelscloud.GetPayloadRequest:
+    properties:
+      token:
+        type: string
+    type: object
+  modelscloud.GetPayloadResponse:
+    properties:
+      payload:
+        type: string
+    type: object
+  modelscloud.PutPayloadRequest:
+    properties:
+      payload:
+        type: string
+      token:
+        type: string
+    type: object
+  modelscloud.PutPayloadResponse:
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: This is a sample server celler server.
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /auth_user:
+    post:
+      consumes:
+      - application/json
+      description: AuthUser
+      parameters:
+      - description: AuthUser
+        in: body
+        name: AuthUser
+        required: true
+        schema:
+          $ref: '#/definitions/modelscloud.AuthUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/modelscloud.AuthUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/modelscloud.BadRequestResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/modelscloud.BadRequestResponse'
+      summary: AuthUser
+  /create_user:
+    post:
+      consumes:
+      - application/json
+      description: CreateUser
+      parameters:
+      - description: CreateUser
+        in: body
+        name: CreateUser
+        required: true
+        schema:
+          $ref: '#/definitions/modelscloud.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/modelscloud.CreateUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/modelscloud.BadRequestResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/modelscloud.BadRequestResponse'
+      summary: CreateUser
+  /get_payload:
+    post:
+      consumes:
+      - application/json
+      description: GetPayload
+      parameters:
+      - description: GetPayload
+        in: body
+        name: GetPayload
+        required: true
+        schema:
+          $ref: '#/definitions/modelscloud.GetPayloadRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/modelscloud.GetPayloadResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/modelscloud.BadRequestResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/modelscloud.BadRequestResponse'
+      summary: GetPayload
+  /put_payload:
+    post:
+      consumes:
+      - application/json
+      description: PutPayload
+      parameters:
+      - description: PutPayload
+        in: body
+        name: PutPayload
+        required: true
+        schema:
+          $ref: '#/definitions/modelscloud.PutPayloadRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/modelscloud.PutPayloadResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/modelscloud.BadRequestResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/modelscloud.BadRequestResponse'
+      summary: PutPayload
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

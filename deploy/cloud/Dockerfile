@@ -2,11 +2,11 @@ FROM golang:1.22-alpine AS builder
 
 WORKDIR /build
 
-COPY . .
+COPY .. .
 
 RUN go mod download
 
-RUN go build -o main backend/cmd/backend/main.go
+RUN go build -o main cloud/cmd/cloud/main.go
 
 FROM alpine
 

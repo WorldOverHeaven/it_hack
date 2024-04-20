@@ -2,12 +2,12 @@ package service
 
 import (
 	"context"
-	"example.com/m/v2/backend/internal/auth"
-	"example.com/m/v2/backend/internal/database"
-	"example.com/m/v2/backend/internal/dto"
-	"example.com/m/v2/backend/internal/models"
 	"github.com/hashicorp/go-uuid"
 	"github.com/pkg/errors"
+	"mephi_hack/backend/internal/database"
+	"mephi_hack/backend/internal/dto"
+	"mephi_hack/backend/internal/models"
+	"mephi_hack/pkg/auth"
 
 	"github.com/samber/lo"
 )

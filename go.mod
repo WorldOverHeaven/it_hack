@@ -1,4 +1,4 @@
-module example.com/m/v2
+module mephi_hack
 
 go 1.22.2
 

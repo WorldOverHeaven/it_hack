@@ -2,10 +2,10 @@ package handler
 
 import (
 	"context"
-	"example.com/m/v2/backend/internal/models"
-	"example.com/m/v2/backend/internal/service"
 	"github.com/labstack/echo/v4"
 	"log"
+	"mephi_hack/backend/internal/models"
+	"mephi_hack/backend/internal/service"
 	"net/http"
 )
 

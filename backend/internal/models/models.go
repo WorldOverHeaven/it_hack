@@ -15,8 +15,8 @@ type CreateUserResponse struct {
 }
 
 type GetChallengeRequest struct {
-	Login   string `json:"login"`
-	OpenKey string `json:"open_key"`
+	Login     string `json:"login"`
+	PublicKey string `json:"public_key"`
 }
 
 type GetChallengeResponse struct {

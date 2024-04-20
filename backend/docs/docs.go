@@ -226,7 +226,7 @@ const docTemplate = `{
                 "login": {
                     "type": "string"
                 },
-                "open_key": {
+                "public_key": {
                     "type": "string"
                 }
             }

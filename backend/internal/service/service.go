@@ -36,10 +36,9 @@ func (s *service) CreateUser(ctx context.Context, req models.CreateUserRequest) 
 	}
 
 	user := dto.User{
-		ID:         id,
-		Login:      req.Login,
-		PublicKey:  req.PublicKey,
-		PrivateKey: req.PrivateKey,
+		ID:        id,
+		Login:     req.Login,
+		PublicKey: req.PublicKey,
 	}
 
 	token, err := s.a.CreateToken(id)

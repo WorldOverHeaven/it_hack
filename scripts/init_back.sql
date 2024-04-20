@@ -3,7 +3,6 @@ CREATE TABLE IF NOT EXISTS users
     id text,
     login text,
     public_key text,
-    private_key text,
     UNIQUE (login),
     UNIQUE (id)
 );

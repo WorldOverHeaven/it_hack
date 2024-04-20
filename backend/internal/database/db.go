@@ -47,7 +47,7 @@ func (db *database) Ping(ctx context.Context) error {
 }
 
 func (db *database) CreateUser(ctx context.Context, user dto.User) error {
-	_, err := db.client.QueryContext(ctx, createUserQuery, user.ID, user.Login, user.PublicKey, user.PrivateKey)
+	_, err := db.client.QueryContext(ctx, createUserQuery, user.ID, user.Login, user.PublicKey)
 	if err != nil {
 		return err
 	}

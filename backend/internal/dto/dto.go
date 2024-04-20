@@ -3,9 +3,8 @@ package dto
 type User struct {
 	ID string
 
-	Login      string
-	PublicKey  string
-	PrivateKey string
+	Login     string
+	PublicKey string
 }
 
 type Challenge struct {

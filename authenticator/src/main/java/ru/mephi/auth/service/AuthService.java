@@ -1,12 +1,19 @@
 package ru.mephi.auth.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.Signature;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Date;
@@ -79,13 +86,16 @@ public class AuthService {
     return webAuthServiceApiHandler.verify(tokens.get(login));
   }
 
-  private void synchronizeKeyStoreWithCloud() {
-    try (InputStream is = cloudStoreApiHandler.loadKeyStore(cloudToken)) {
-      keyStoreService.addKeysFromOtherKeyStore(is);
-      cloudStoreApiHandler.uploadKeyStore(cloudToken, keyStoreService.getKeyStore());
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+  private void synchronizeKeyStoreWithCloud() throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException {
+    byte[] cloudData = cloudStoreApiHandler.loadKeyStore(cloudToken);
+    if (cloudData.length > 0) {
+      try (InputStream is =new ByteArrayInputStream(cloudData)) {
+        keyStoreService.addKeysFromOtherKeyStore(is);
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
     }
+    cloudStoreApiHandler.uploadKeyStore(cloudToken, keyStoreService.getKeyStore());
   }
 
   private X509Certificate generateCertificate(KeyPair keyPair) throws Exception {

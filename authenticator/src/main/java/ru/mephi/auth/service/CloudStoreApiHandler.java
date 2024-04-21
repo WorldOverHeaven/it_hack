@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
+import java.security.PublicKey;
+import java.util.Base64;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -41,26 +43,32 @@ public class CloudStoreApiHandler {
     return restTemplate.postForObject(url, cred, TokenDto.class);
   }
 
-  public InputStream loadKeyStore(String token) {
+  public byte[] loadKeyStore(String token) {
     String url = cloudStoreApiHost + "/get_payload";
 
     PayloadDto payload = restTemplate.postForObject(url, new TokenDto(token), PayloadDto.class);
-    byte[] bytes = payload.payload().getBytes(StandardCharsets.UTF_8);
 
-    return new ByteArrayInputStream(bytes);
+    return fromStr(payload.payload());
   }
 
-  public void uploadKeyStore(String token, InputStream keyStoreData) throws IOException {
+  public void uploadKeyStore(String token, byte[] keyStoreData) throws IOException {
     String url = cloudStoreApiHost + "/put_payload";
 
     PayloadWithTokenDto payloadWithTokenDto = new PayloadWithTokenDto(
-        IOUtils.toString(keyStoreData, StandardCharsets.UTF_8),
+        toStr(keyStoreData),
         token
     );
     ResponseEntity<Void> response = restTemplate.postForEntity(url, payloadWithTokenDto, Void.class);
 
     if (!response.getStatusCode().is2xxSuccessful()) {
-      throw new RemoteException();
+      throw new RuntimeException();
     }
+  }
+
+  private String toStr(byte[] bytes) {
+    return Base64.getEncoder().encodeToString(bytes);
+  }
+  private byte[] fromStr(String str) {
+    return Base64.getDecoder().decode(str);
   }
 }

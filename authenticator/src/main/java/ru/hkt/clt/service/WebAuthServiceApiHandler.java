@@ -1,15 +1,15 @@
-package ru.mephi.auth.service;
+package ru.hkt.clt.service;
 
 import java.security.PublicKey;
 import java.util.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import ru.mephi.auth.dto.ChallengeDto;
-import ru.mephi.auth.dto.LoginWithPublicKeyDto;
-import ru.mephi.auth.dto.MessageDto;
-import ru.mephi.auth.dto.SolvedChallengeDto;
-import ru.mephi.auth.dto.TokenDto;
+import ru.hkt.clt.dto.ChallengeDto;
+import ru.hkt.clt.dto.LoginWithPublicKeyDto;
+import ru.hkt.clt.dto.MessageDto;
+import ru.hkt.clt.dto.SolvedChallengeDto;
+import ru.hkt.clt.dto.TokenDto;
 
 @Service
 public class WebAuthServiceApiHandler {

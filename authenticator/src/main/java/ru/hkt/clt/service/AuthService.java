@@ -1,11 +1,9 @@
-package ru.mephi.auth.service;
+package ru.hkt.clt.service;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStoreException;
@@ -27,8 +25,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.stereotype.Service;
-import ru.mephi.auth.dto.ChallengeDto;
-import ru.mephi.auth.dto.MessageDto;
+import ru.hkt.clt.dto.ChallengeDto;
+import ru.hkt.clt.dto.MessageDto;
 
 @Service
 public class AuthService {

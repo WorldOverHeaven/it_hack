@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ru.mephi.auth</groupId>
-    <artifactId>auth-client</artifactId>
+    <artifactId>client-app</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>client-app</name>
     <description>client-app</description>
@@ -70,10 +70,17 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <image>
-                        <name>realbaty/client-app:v1</name>
-                    </image>
+                    <mainClass>ru.hkt.clt.ClientAppApplication</mainClass>
+                    <layout>JAR</layout>
+                    <includeSystemScope>true</includeSystemScope>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

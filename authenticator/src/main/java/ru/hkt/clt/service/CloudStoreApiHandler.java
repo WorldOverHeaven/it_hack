@@ -1,21 +1,15 @@
-package ru.mephi.auth.service;
+package ru.hkt.clt.service;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.rmi.RemoteException;
-import java.security.PublicKey;
 import java.util.Base64;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import ru.mephi.auth.dto.CredDto;
-import ru.mephi.auth.dto.PayloadDto;
-import ru.mephi.auth.dto.PayloadWithTokenDto;
-import ru.mephi.auth.dto.TokenDto;
+import ru.hkt.clt.dto.CredDto;
+import ru.hkt.clt.dto.PayloadDto;
+import ru.hkt.clt.dto.PayloadWithTokenDto;
+import ru.hkt.clt.dto.TokenDto;
 
 @Service
 public class CloudStoreApiHandler {

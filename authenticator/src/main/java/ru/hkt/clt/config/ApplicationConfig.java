@@ -1,4 +1,4 @@
-package ru.mephi.auth.config;
+package ru.hkt.clt.config;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
-import ru.mephi.auth.resource.AuthResource;
+import ru.hkt.clt.resource.AuthResource;
 
 @Configuration
 public class ApplicationConfig {

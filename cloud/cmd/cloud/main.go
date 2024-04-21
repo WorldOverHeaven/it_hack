@@ -27,7 +27,7 @@ import (
 	_ "mephi_hack/cloud/docs"
 )
 
-const secret = "niggers"
+const secret = "fasfafasfsafasfewrcxv"
 
 func parseRootPath() string {
 	var rootPath string

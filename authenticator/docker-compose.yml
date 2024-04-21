@@ -1,40 +1,9 @@
 version: "3.9"
 services:
-  postgres:
-    image: postgres:13.3
-    environment:
-      POSTGRES_DB: "todo-list"
-      POSTGRES_USER: "user"
-      POSTGRES_PASSWORD: "1234"
-      PGDATA: "/var/lib/postgresql/data/pgdata"
-    volumes:
-      - ./database-init:/docker-entrypoint-initdb.d
-      - .:/var/lib/postgresql/data
+  contracts-tests-admin:
+    container_name: auth-client
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     ports:
-      - "32768:5432"
-    networks:
-      - postgres
-
-  pgadmin:
-    container_name: pgadmin_container
-    image: dpage/pgadmin4:5.7
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "mail@exemple.com"
-      PGADMIN_DEFAULT_PASSWORD: "1234"
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-    volumes:
-      - ./pgadmin:/var/lib/pgadmin
-    ports:
-      - "5050:80"
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 1G
-    networks:
-      - postgres
-
-networks:
-  postgres:
-    driver: bridge
+      - "8080:8080"

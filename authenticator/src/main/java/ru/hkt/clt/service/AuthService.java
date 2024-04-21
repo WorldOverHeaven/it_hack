@@ -1,11 +1,17 @@
-package ru.mephi.auth.service;
+package ru.hkt.clt.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.Signature;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Date;
@@ -19,13 +25,12 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.stereotype.Service;
-import ru.mephi.auth.dto.ChallengeDto;
+import ru.hkt.clt.dto.ChallengeDto;
+import ru.hkt.clt.dto.MessageDto;
 
 @Service
 public class AuthService {
-  private volatile String cloudLogin;
-  private volatile String pass;
-  private volatile String token;
+  private volatile String cloudToken;
   private final KeyStoreService keyStoreService;
   private final CloudStoreApiHandler cloudStoreApiHandler;
   private final WebAuthServiceApiHandler webAuthServiceApiHandler;
@@ -41,7 +46,18 @@ public class AuthService {
     this.keyPairGenerator = keyPairGenerator;
   }
 
+  public void joinCloud(String cloudLogin, String cloudPass) {
+    try {
+      this.cloudToken = cloudStoreApiHandler.authUser(cloudLogin, cloudPass).token();
+    } catch (Exception e) {
+      this.cloudToken = cloudStoreApiHandler.registerUser(cloudLogin, cloudPass).token();
+    }
+  }
+
   public void registerNewUser(String login) throws Exception {
+    if (cloudToken == null) {
+      throw new RuntimeException();
+    }
     KeyPair keyPair = keyPairGenerator.generateKeyPair();
     String token = webAuthServiceApiHandler.createUser(login, keyPair.getPublic()).token();
     tokens.put(login, token);
@@ -50,6 +66,10 @@ public class AuthService {
   }
 
   public void authUser(String login) throws Exception {
+    if (cloudToken == null) {
+      throw new RuntimeException();
+    }
+    synchronizeKeyStoreWithCloud();
     KeyPair keyPair = keyStoreService.getKeyPair(login);
     ChallengeDto challenge = webAuthServiceApiHandler.getChallenge(login, keyPair.getPublic());
     String sign = signChallenge(challenge.challenge(), keyPair.getPrivate());
@@ -57,7 +77,23 @@ public class AuthService {
     tokens.put(login, token);
   }
 
-  private void synchronizeKeyStoreWithCloud() {
+  public MessageDto verify(String login) {
+    if (cloudToken == null) {
+      throw new RuntimeException();
+    }
+    return webAuthServiceApiHandler.verify(tokens.get(login));
+  }
+
+  private void synchronizeKeyStoreWithCloud() throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException {
+    byte[] cloudData = cloudStoreApiHandler.loadKeyStore(cloudToken);
+    if (cloudData.length > 0) {
+      try (InputStream is =new ByteArrayInputStream(cloudData)) {
+        keyStoreService.addKeysFromOtherKeyStore(is);
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    }
+    cloudStoreApiHandler.uploadKeyStore(cloudToken, keyStoreService.getKeyStore());
   }
 
   private X509Certificate generateCertificate(KeyPair keyPair) throws Exception {
@@ -73,7 +109,7 @@ public class AuthService {
     return new JcaX509CertificateConverter().setProvider(new BouncyCastleProvider()).getCertificate(certHolder);
   }
 
-  public static String signChallenge(String challenge, PrivateKey privateKey) throws Exception {
+  private static String signChallenge(String challenge, PrivateKey privateKey) throws Exception {
     byte[] challengeBytes = Base64.getDecoder().decode(challenge);
     Signature signature = Signature.getInstance("SHA256withRSA");
     signature.initSign(privateKey);

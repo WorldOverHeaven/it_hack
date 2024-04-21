@@ -1,7 +1,6 @@
-package ru.mephi.auth.service;
+package ru.hkt.clt.service;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -87,14 +86,12 @@ public class KeyStoreService {
     }
   }
 
-  public InputStream getKeyStore() throws FileNotFoundException {
-    FileInputStream fis;
-    try {
-      fis = new FileInputStream(keyStorePath);
-    } catch (FileNotFoundException e) {
-      throw new FileNotFoundException("KeyStore file not found at " + keyStorePath);
-    }
-    return fis;
+  public byte[] getKeyStore() throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException {
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+    keyStore.store(byteArrayOutputStream, keyStorePassword.toCharArray());
+
+    return byteArrayOutputStream.toByteArray();
   }
 
   public void addKeysFromOtherKeyStore(InputStream keyStoreData) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException {

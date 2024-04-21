@@ -89,7 +89,11 @@ public class AuthService {
     if (cloudToken == null) {
       return "Нужна авторизация в облаке";
     }
-    return webAuthServiceApiHandler.verify(tokens.get(login)).message();
+    try {
+      return webAuthServiceApiHandler.verify(tokens.get(login)).message();
+    } catch (Exception e) {
+      return "У вас нет ключа для пользователя с таким логином";
+    }
   }
 
   private void synchronizeKeyStoreWithCloud() throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException {

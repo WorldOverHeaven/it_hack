@@ -10,3 +10,7 @@ run:
 	sudo docker-compose -f $(ROOT_FOLDER)/deploy/docker-compose.yaml -p deploy up --build -d cloud_db
 	sudo docker-compose -f $(ROOT_FOLDER)/deploy/docker-compose.yaml -p deploy up --build -d hack_backend
 	sudo docker-compose -f $(ROOT_FOLDER)/deploy/docker-compose.yaml -p deploy up --build -d hack_cloud
+
+auth_run:
+	sudo docker-compose -f $(ROOT_FOLDER)/authenticator/docker-compose.yaml -p deploy up --build -d auth-client
+

@@ -5,7 +5,7 @@ networks:
 
 
 services:
-  contracts-tests-admin:
+  auth-client:
     container_name: auth-client
     build:
       context: .

@@ -10,7 +10,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.servlet.ServletProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,14 +36,14 @@ public class ApplicationConfig {
     @Bean
     public KeyStore getKeyStore() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-//        File keystoreFile = new File(keyStorePath);
-//        if (keystoreFile.exists()) {
-//            try (InputStream is = new FileInputStream(keystoreFile)) {
-//                keyStore.load(is, keyStorePassword.toCharArray());
-//            }
-//        } else {
-//            keyStore.load(null, keyStorePassword.toCharArray());
-//        }
+        File keystoreFile = new File(keyStorePath);
+        if (keystoreFile.exists()) {
+            try (InputStream is = new FileInputStream(keystoreFile)) {
+                keyStore.load(is, keyStorePassword.toCharArray());
+            }
+        } else {
+            keyStore.load(null, keyStorePassword.toCharArray());
+        }
         return keyStore;
     }
 
@@ -54,7 +53,6 @@ public class ApplicationConfig {
     public ResourceConfig jerseyConfig() {
         ResourceConfig config = new ResourceConfig();
         config.register(AuthResource.class);
-        config.property(ServletProperties.FILTER_FORWARD_ON_404, true);
         return config;
     }
 }

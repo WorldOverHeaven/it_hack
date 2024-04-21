@@ -21,22 +21,19 @@ public class AuthResource {
   @POST
   @Path(value = "/join_cloud")
   public Response joinCloud(@QueryParam("cloudLogin") String cloudLogin, @QueryParam("cloudPass") String cloudPass) {
-    authService.joinCloud(cloudLogin, cloudPass);
-    return Response.noContent().build();
+    return Response.ok(authService.joinCloud(cloudLogin, cloudPass)).build();
   }
 
   @POST
   @Path(value = "/register_new_user")
   public Response registerNewUser(@QueryParam("login") String login) throws Exception {
-    authService.registerNewUser(login);
-    return Response.noContent().build();
+    return Response.ok(authService.registerNewUser(login)).build();
   }
 
   @POST
   @Path(value = "/auth_user")
   public Response authUser(@QueryParam("login") String login) throws Exception {
-    authService.authUser(login);
-    return Response.noContent().build();
+    return Response.ok(authService.authUser(login)).build();
   }
 
   @POST

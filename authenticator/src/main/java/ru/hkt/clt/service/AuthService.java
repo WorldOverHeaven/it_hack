@@ -25,8 +25,11 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.stereotype.Service;
+
+import ch.qos.logback.core.subst.Token;
 import ru.hkt.clt.dto.ChallengeDto;
 import ru.hkt.clt.dto.MessageDto;
+import ru.hkt.clt.dto.TokenDto;
 
 @Service
 public class AuthService {
@@ -46,28 +49,32 @@ public class AuthService {
     this.keyPairGenerator = keyPairGenerator;
   }
 
-  public void joinCloud(String cloudLogin, String cloudPass) {
+  public String joinCloud(String cloudLogin, String cloudPass) {
+
     try {
       this.cloudToken = cloudStoreApiHandler.authUser(cloudLogin, cloudPass).token();
+      return "TOKEN = " + this.cloudToken;
     } catch (Exception e) {
       this.cloudToken = cloudStoreApiHandler.registerUser(cloudLogin, cloudPass).token();
+      return "TOKEN = " + this.cloudToken;
     }
   }
 
-  public void registerNewUser(String login) throws Exception {
+  public String registerNewUser(String login) throws Exception {
     if (cloudToken == null) {
-      throw new RuntimeException();
+      return "Нужна авторизация в облаке";
     }
     KeyPair keyPair = keyPairGenerator.generateKeyPair();
     String token = webAuthServiceApiHandler.createUser(login, keyPair.getPublic()).token();
     tokens.put(login, token);
     keyStoreService.putKeys(keyPair, generateCertificate(keyPair), login);
     synchronizeKeyStoreWithCloud();
+    return "TOKEN = " + token;
   }
 
-  public void authUser(String login) throws Exception {
+  public String authUser(String login) throws Exception {
     if (cloudToken == null) {
-      throw new RuntimeException();
+      return "Нужна авторизация в облаке";
     }
     synchronizeKeyStoreWithCloud();
     KeyPair keyPair = keyStoreService.getKeyPair(login);
@@ -75,13 +82,14 @@ public class AuthService {
     String sign = signChallenge(challenge.challenge(), keyPair.getPrivate());
     String token = webAuthServiceApiHandler.solveChallenge(challenge.challenge_id(), sign).token();
     tokens.put(login, token);
+    return "TOKEN = " + token;
   }
 
-  public MessageDto verify(String login) {
+  public String verify(String login) {
     if (cloudToken == null) {
-      throw new RuntimeException();
+      return "Нужна авторизация в облаке";
     }
-    return webAuthServiceApiHandler.verify(tokens.get(login));
+    return webAuthServiceApiHandler.verify(tokens.get(login)).message();
   }
 
   private void synchronizeKeyStoreWithCloud() throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException {
